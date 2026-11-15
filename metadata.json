@@ -2,5 +2,7 @@
   "name": "CASA STYLE",
   "description": "Boutique e-commerce de prêt-à-porter contemporain et accessoires à Casablanca, Maroc. Votre style, votre identité.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

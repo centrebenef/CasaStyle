@@ -3,7 +3,6 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import multer from 'multer';
-import { createServer as createViteServer } from 'vite';
 import { db, enrichProducts, getSettingsMap, hashPassword, initSchema, verifyPassword } from './server/db.ts';
 import { seedDatabase } from './server/seed.ts';
 
@@ -12,8 +11,9 @@ seedDatabase();
 
 const app = express();
 const PORT = 3000;
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 
-const uploadsDir = path.join(process.cwd(), 'uploads');
+const uploadsDir = isServerless ? '/tmp/casastyle-uploads' : path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -1412,6 +1412,7 @@ app.put('/api/admin/settings', requireAdmin, (req, res) => {
 
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
@@ -1430,4 +1431,8 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!isServerless) {
+  startServer();
+}
+
+export default app;
